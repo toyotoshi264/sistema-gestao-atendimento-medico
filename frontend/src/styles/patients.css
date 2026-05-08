@@ -1,0 +1,9 @@
+.patients-page .patients-table {
+  margin-top: 16px;
+}
+
+.patient-form .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
