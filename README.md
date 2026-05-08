@@ -1,80 +1,142 @@
-# Sistema de Gestão de Atendimento Médico com Prontuário Eletrônico
+# SGAM - Sistema de Gestão de Atendimento Médico
 
-## Descrição
+Sistema de Gestão de Atendimento Médico com Prontuário Eletrônico, desenvolvido como protótipo funcional para o Trabalho de Conclusão de Curso (TCC) do curso de Engenharia de Software da Unicesumar.
 
-Sistema web para gestão de clínicas médicas de pequeno e médio porte, com funcionalidades de agendamento de consultas, prontuário eletrônico, controle financeiro e gestão de pacientes. Desenvolvido como Trabalho de Conclusão de Curso (TCC) em Engenharia de Software.
+## Sobre o Projeto
+
+O SGAM é uma aplicação web que integra funcionalidades essenciais para a gestão de clínicas e consultórios médicos, incluindo:
+
+- Autenticação segura com JWT e controle de acesso por papéis (RBAC)
+- Cadastro e gestão de pacientes
+- Prontuário eletrônico com histórico de atendimentos
+- Agendamento de consultas com validação de conflitos
+- Dashboard com métricas operacionais em tempo real
+- Logs de auditoria para rastreabilidade
+
+## Screenshots
+
+### Tela de Login
+![Login](screenshots/tela_login.png)
+
+### Dashboard Principal
+![Dashboard](screenshots/tela_dashboard.png)
+
+### Gestão de Pacientes
+![Pacientes](screenshots/tela_pacientes.png)
+
+### Agendamento de Consultas
+![Agendamentos](screenshots/tela_agendamentos.png)
+
+### Prontuário Eletrônico
+![Prontuário](screenshots/tela_prontuario.png)
 
 ## Tecnologias Utilizadas
 
-### Back-end
-- Node.js + Express.js
-- PostgreSQL (banco de dados relacional)
-- JWT (autenticação)
-- bcrypt (hash de senhas)
-- RBAC (controle de acesso por perfis)
-
 ### Front-end
-- React.js
-- React Router (navegação SPA)
+- React.js 18
+- React Router (SPA)
+- CSS responsivo
 - Axios (requisições HTTP)
-- CSS Modules
+
+### Back-end
+- Node.js 18+
+- Express.js
+- JSON Web Tokens (JWT)
+- bcrypt (hash de senhas)
+
+### Banco de Dados
+- PostgreSQL 14+
+- Redis (cache)
+- Criptografia AES-256 para dados sensíveis
 
 ## Estrutura do Projeto
 
 ```
+sistema-gestao-atendimento-medico/
 ├── backend/
 │   ├── src/
-│   │   ├── config/         # Configurações (DB, JWT)
+│   │   ├── config/         # Configurações (banco de dados)
 │   │   ├── controllers/    # Lógica de negócio
-│   │   ├── middleware/     # Auth, RBAC, validação
-│   │   ├── models/         # Modelos do banco
+│   │   ├── middleware/     # Autenticação e autorização
+│   │   ├── models/         # Schema SQL
 │   │   └── routes/         # Rotas da API
+│   ├── server.js           # Ponto de entrada do servidor
 │   ├── package.json
-│   └── server.js
+│   └── .env.example
 ├── frontend/
+│   ├── public/
 │   ├── src/
 │   │   ├── components/     # Componentes reutilizáveis
 │   │   ├── pages/          # Páginas da aplicação
-│   │   ├── services/       # Chamadas à API
+│   │   ├── services/       # Serviço de API
 │   │   └── styles/         # Estilos CSS
-│   ├── public/
 │   └── package.json
-└── docs/                   # Documentação e diagramas
+├── screenshots/            # Capturas de tela
+└── README.md
 ```
 
 ## Funcionalidades
 
-- **Autenticação e Autorização:** Login com JWT e controle de acesso por perfis (Médico, Recepcionista, Administrador)
-- **Cadastro de Pacientes:** Registro completo com dados pessoais, alergias e histórico
-- **Agendamento de Consultas:** Visualização de horários disponíveis e agendamento com confirmação
-- **Prontuário Eletrônico:** Registro de atendimentos com anamnese, exame físico, diagnóstico (CID) e prescrição
-- **Controle Financeiro:** Registro de pagamentos vinculados às consultas
-- **Logs de Auditoria:** Rastreabilidade de todas as ações em prontuários
+| Módulo | Descrição |
+|--------|-----------|
+| Autenticação | Login com JWT, sessão segura, logout |
+| RBAC | Controle de acesso por perfis (Admin, Médico, Recepcionista) |
+| Pacientes | Cadastro completo, histórico, alergias, medicamentos |
+| Agendamentos | Marcação, confirmação, cancelamento, validação de conflitos |
+| Prontuário | Anamnese, diagnóstico (CID-10), prescrição, histórico |
+| Financeiro | Registro de pagamentos vinculados às consultas |
+| Auditoria | Log imutável de todas as ações em prontuários |
 
 ## Requisitos de Implantação
 
 - Node.js >= 18.x
 - PostgreSQL >= 14.x
-- NPM ou Yarn
+- Redis (opcional, para cache)
+- Nginx (para servir arquivos estáticos em produção)
 
-## Como Executar
+## Instalação e Execução
 
-### Back-end
+### 1. Clonar o repositório
 ```bash
-cd backend
-npm install
-npm run dev
+git clone https://github.com/toyotoshi264/sistema-gestao-atendimento-medico.git
+cd sistema-gestao-atendimento-medico
 ```
 
-### Front-end
+### 2. Configurar o Back-end
+```bash
+cd backend
+cp .env.example .env
+# Editar .env com suas credenciais do banco
+npm install
+npm start
+```
+
+### 3. Configurar o Front-end
 ```bash
 cd frontend
 npm install
 npm start
 ```
 
+### 4. Criar o Banco de Dados
+```bash
+psql -U postgres -f backend/src/models/schema.sql
+```
+
+## Perfis de Acesso (RBAC)
+
+| Perfil | Permissões |
+|--------|-----------|
+| Administrador | Acesso total ao sistema |
+| Médico | Prontuário, consultas, pacientes |
+| Recepcionista | Agendamentos, cadastro de pacientes |
+
 ## Autor
 
 **Erick Toyotoshi Martins**  
 Engenharia de Software - Unicesumar  
-2025
+TCC II - 2025
+
+## Licença
+
+Este projeto foi desenvolvido para fins acadêmicos.
