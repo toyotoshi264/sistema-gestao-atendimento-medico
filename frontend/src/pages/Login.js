@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/login.css';
 
-function Login() {
+function Login({ onLogin }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -29,6 +29,7 @@ function Login() {
       const token = 'demo_token_' + Date.now();
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify({ username: user.username, role: user.role }));
+      if (onLogin) onLogin();
       navigate('/');
     } else {
       setError('Credenciais inválidas. Verifique seu usuário e senha.');
