@@ -3,13 +3,44 @@ import '../styles/appointments.css';
 
 function Appointments() {
   const [showForm, setShowForm] = useState(false);
-  const [appointments] = useState([
+  const [appointments, setAppointments] = useState([
     { id: 1, paciente: 'Maria Silva', medico: 'Dr. Carlos Mendes', data: '2025-05-08', hora: '08:30', status: 'confirmado' },
     { id: 2, paciente: 'João Santos', medico: 'Dra. Ana Oliveira', data: '2025-05-08', hora: '09:00', status: 'agendado' },
     { id: 3, paciente: 'Pedro Almeida', medico: 'Dr. Carlos Mendes', data: '2025-05-08', hora: '09:30', status: 'agendado' },
     { id: 4, paciente: 'Ana Costa', medico: 'Dra. Ana Oliveira', data: '2025-05-08', hora: '10:00', status: 'concluido' },
     { id: 5, paciente: 'Lucas Ferreira', medico: 'Dr. Carlos Mendes', data: '2025-05-08', hora: '10:30', status: 'cancelado' },
   ]);
+
+  const handleConfirm = (id) => {
+    setAppointments(appointments.map(apt => 
+      apt.id === id ? { ...apt, status: 'confirmado' } : apt
+    ));
+    alert('Consulta confirmada com sucesso!');
+  };
+
+  const handleCancel = (id) => {
+    if (window.confirm('Deseja realmente cancelar esta consulta?')) {
+      setAppointments(appointments.map(apt => 
+        apt.id === id ? { ...apt, status: 'cancelado' } : apt
+      ));
+      alert('Consulta cancelada.');
+    }
+  };
+
+  const handleNewAppointment = (e) => {
+    e.preventDefault();
+    const newApt = {
+      id: appointments.length + 1,
+      paciente: e.target.paciente.value,
+      medico: e.target.medico.value,
+      data: e.target.data.value,
+      hora: e.target.hora.value,
+      status: 'agendado'
+    };
+    setAppointments([...appointments, newApt]);
+    setShowForm(false);
+    alert('Consulta agendada com sucesso!');
+  };
 
   const getStatusBadge = (status) => {
     const badges = {
@@ -41,54 +72,55 @@ function Appointments() {
       {showForm && (
         <div className="form-card">
           <h3>Novo Agendamento</h3>
-          <form className="appointment-form">
+          <form className="appointment-form" onSubmit={handleNewAppointment}>
             <div className="form-row">
               <div className="form-group">
                 <label>Paciente</label>
-                <select>
+                <select name="paciente" required>
                   <option value="">Selecione o paciente</option>
-                  <option>Maria Silva</option>
-                  <option>João Santos</option>
-                  <option>Pedro Almeida</option>
+                  <option value="Maria Silva">Maria Silva</option>
+                  <option value="João Santos">João Santos</option>
+                  <option value="Pedro Almeida">Pedro Almeida</option>
+                  <option value="Ana Costa">Ana Costa</option>
                 </select>
               </div>
               <div className="form-group">
                 <label>Médico</label>
-                <select>
+                <select name="medico" required>
                   <option value="">Selecione o médico</option>
-                  <option>Dr. Carlos Mendes - Clínico Geral</option>
-                  <option>Dra. Ana Oliveira - Cardiologia</option>
+                  <option value="Dr. Carlos Mendes">Dr. Carlos Mendes - Clínico Geral</option>
+                  <option value="Dra. Ana Oliveira">Dra. Ana Oliveira - Cardiologia</option>
                 </select>
               </div>
             </div>
             <div className="form-row">
               <div className="form-group">
                 <label>Data</label>
-                <input type="date" />
+                <input type="date" name="data" required />
               </div>
               <div className="form-group">
                 <label>Horário</label>
-                <select>
+                <select name="hora" required>
                   <option value="">Selecione</option>
-                  <option>08:00</option>
-                  <option>08:30</option>
-                  <option>09:00</option>
-                  <option>09:30</option>
-                  <option>10:00</option>
-                  <option>10:30</option>
-                  <option>11:00</option>
-                  <option>14:00</option>
-                  <option>14:30</option>
-                  <option>15:00</option>
+                  <option value="08:00">08:00</option>
+                  <option value="08:30">08:30</option>
+                  <option value="09:00">09:00</option>
+                  <option value="09:30">09:30</option>
+                  <option value="10:00">10:00</option>
+                  <option value="10:30">10:30</option>
+                  <option value="11:00">11:00</option>
+                  <option value="14:00">14:00</option>
+                  <option value="14:30">14:30</option>
+                  <option value="15:00">15:00</option>
                 </select>
               </div>
             </div>
             <div className="form-group full-width">
               <label>Observações</label>
-              <textarea placeholder="Observações sobre o agendamento"></textarea>
+              <textarea name="observacoes" placeholder="Observações sobre o agendamento"></textarea>
             </div>
             <div className="form-actions">
-              <button type="button" className="btn-primary">Agendar</button>
+              <button type="submit" className="btn-primary">Agendar</button>
               <button type="button" className="btn-secondary" onClick={() => setShowForm(false)}>Cancelar</button>
             </div>
           </form>
@@ -115,8 +147,18 @@ function Appointments() {
               <td>{apt.medico}</td>
               <td>{getStatusBadge(apt.status)}</td>
               <td>
-                <button className="btn-action">Confirmar</button>
-                <button className="btn-action btn-cancel">Cancelar</button>
+                {apt.status === 'agendado' && (
+                  <>
+                    <button className="btn-action" onClick={() => handleConfirm(apt.id)}>Confirmar</button>
+                    <button className="btn-action btn-cancel" onClick={() => handleCancel(apt.id)}>Cancelar</button>
+                  </>
+                )}
+                {apt.status === 'confirmado' && (
+                  <button className="btn-action btn-cancel" onClick={() => handleCancel(apt.id)}>Cancelar</button>
+                )}
+                {(apt.status === 'concluido' || apt.status === 'cancelado') && (
+                  <span className="no-actions">—</span>
+                )}
               </td>
             </tr>
           ))}
