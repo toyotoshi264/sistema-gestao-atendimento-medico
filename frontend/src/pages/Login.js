@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../services/api';
 import '../styles/login.css';
 
 function Login() {
@@ -15,16 +14,27 @@ function Login() {
     setLoading(true);
     setError('');
 
-    try {
-      const response = await api.post('/auth/login', { username, password });
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+    // Modo demonstração - credenciais válidas para apresentação
+    const validUsers = {
+      'admin@clinica.com': { password: '123456', username: 'Dr. Erick Martins', role: 'Administrador' },
+      'medico@clinica.com': { password: '123456', username: 'Dr. Carlos Mendes', role: 'Médico' },
+      'recepcionista@clinica.com': { password: '123456', username: 'Ana Souza', role: 'Recepcionista' },
+    };
+
+    // Simula um pequeno delay para parecer autenticação real
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    const user = validUsers[username];
+    if (user && user.password === password) {
+      const token = 'demo_token_' + Date.now();
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify({ username: user.username, role: user.role }));
       navigate('/');
-    } catch (err) {
+    } else {
       setError('Credenciais inválidas. Verifique seu usuário e senha.');
-    } finally {
-      setLoading(false);
     }
+
+    setLoading(false);
   };
 
   return (
@@ -42,7 +52,7 @@ function Login() {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Digite seu usuário"
+              placeholder="Digite seu e-mail"
               required
             />
           </div>
@@ -59,7 +69,7 @@ function Login() {
           </div>
           {error && <div className="error-message">{error}</div>}
           <button type="submit" className="btn-login" disabled={loading}>
-            {loading ? 'Entrando...' : 'Entrar'}
+            {loading ? 'Autenticando...' : 'Entrar'}
           </button>
         </form>
       </div>
